@@ -1,3 +1,9 @@
+dns-flood-detector (1.10-2) unstable; urgency=low
+
+  * NOT RELEASED YET
+
+ --  <waja@cyconet.org>  Sat,  4 Nov 2006 21:46:03 +0100
+
 dns-flood-detector (1.10-1) unstable; urgency=low
 
   * Initial release (Closes: #396618).
