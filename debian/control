@@ -7,7 +7,7 @@ Standards-Version: 3.7.2
 
 Package: dns-flood-detector
 Architecture: any
-Depends: ${misc:Depends}
+Depends: ${shlibs:Depends}
 Description: detect abusive usage levels on high traffic nameservers
  This package provides the dns-flood-detector daemon.
  .
