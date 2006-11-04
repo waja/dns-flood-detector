@@ -1,0 +1,11 @@
+CFLAGS+=-O -g
+LDLIBS=-lpcap -pthread -lm
+
+all: dns_flood_detector
+	strip dns_flood_detector
+clean:
+	rm -rf dns_flood_detector *.o *~
+install: 
+	cp dns_flood_detector /usr/local/sbin/
+
+dns_flood_detector: dns_flood_detector.c

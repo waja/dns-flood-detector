@@ -1,0 +1,5 @@
+dns-flood-detector (1.10-1) unstable; urgency=low
+
+  * Initial release (Closes: #396618).
+
+ -- Jan Wagner <waja@cyconet.org>  Fri,  3 Nov 2006 12:39:42 +0100

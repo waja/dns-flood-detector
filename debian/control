@@ -1,0 +1,23 @@
+Source: dns-flood-detector
+Section: net
+Priority: optional
+Maintainer: Jan Wagner <waja@cyconet.org>
+Build-Depends: debhelper (>= 5), libpcap0.8-dev
+Standards-Version: 3.7.2
+
+Package: dns-flood-detector
+Architecture: any
+Depends: ${misc:Depends}
+Description: detect abusive usage levels on high traffic nameservers
+ This package provides the dns-flood-detector daemon.
+ .
+ It was developed to detect abusive usage levels on high traffic nameservers
+ and to enable quick response in halting the use of one's nameserver to
+ facilitate spam.
+ It uses libpcap (in non-promiscuous mode) to monitor incoming dns queries to a
+ nameserver. The tool may be run in one of two modes, either daemon mode or
+ "bindsnap" mode. In daemon mode, the tool will alarm via syslog. In bindsnap
+ mode, the user is able to get near-real-time stats on usage to aid in more
+ detailed troubleshooting.
+ .
+  Homepage: <http://www.adotout.com/>

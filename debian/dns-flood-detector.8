@@ -1,0 +1,70 @@
+.TH DNS-FLOOD-DETECTOR 8 "2006-11-03" "1.10" "dns flood detection tool"
+
+.SH NAME
+DNS-FLOOD-DETECTOR \- dns flood detection and alert tool
+
+.SH SYNOPSIS
+.B dns-flood-detector
+.RB [\| \-b \||\| \-d \|]
+.RB [\| \-v \|]
+.RB [\| \-h \|]
+.RB [\| \-i
+.IR device \|]
+.RB [\| -t
+.IR n \|]
+.RB [\| -a
+.IR n \|]
+.RB [\| -w
+.IR n \|]
+.RB [\| -x
+.IR n \|]
+.RB [\| -m
+.IR n \|]
+
+.SH DESCRIPTION
+.B DNS Flood Detector
+was developed to detect abusive usage levels on high traffic nameservers and to
+enable quick response to the use of one's nameserver to facilitate spam.
+
+.SH OPTIONS
+.B
+.TP
+.B \-b
+run in foreground in bindsnap mode
+.TP
+.B \-d
+run in background in daemon mode
+.TP
+.B \-v
+verbose output \- use again for more verbosity
+.TP
+.B \-h
+display help
+.TP
+.B \-i device
+specify device name to listen on
+.TP
+.B \-t n
+alarm at >n queries per second
+.TP
+.B \-a n
+reset alarm after n seconds
+.TP
+.B \-w n
+calculate stats every n seconds
+.TP
+.B \-x n
+create n buckets
+.TP
+.B \-m n
+report overall stats every n seconds
+
+.SH SEE ALSO
+.B Website
+<http://www.adotout.com/>
+
+.SH AUTHOR
+DNS-FLOOD-DETECTOR was written by Dennis Opacki <dopacki@adotout.com>.
+.PP
+This manual page was written by Jan Wagner <waja@cyconet.org>,
+for the Debian project (but may be used by others).
