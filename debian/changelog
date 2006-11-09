@@ -2,7 +2,7 @@ dns-flood-detector (1.10-3) unstable; urgency=low
 
   * using killall in init script to get daemon stopped
 
- -- Jan Wagner <waja@localhost>  Thu,  9 Nov 2006 20:49:10 +0100
+ -- Jan Wagner <waja@cyconet.org>  Thu,  9 Nov 2006 20:49:10 +0100
 
 dns-flood-detector (1.10-2) unstable; urgency=low
 
