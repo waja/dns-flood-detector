@@ -41,14 +41,14 @@ case "$1" in
 	echo -n "Stopping $DESC: "
 	start-stop-daemon --stop --quiet --pidfile /var/run/$NAME.pid \
 		--exec $DAEMON
-	killall $NAME
+	killall -9 $NAME
 	echo "$NAME."
 	;;
   restart|force-reload)
 	echo -n "Restarting $DESC: "
 	start-stop-daemon --stop --quiet --pidfile \
 		/var/run/$NAME.pid --exec $DAEMON
-	killall $NAME
+	killall -9 $NAME
 	sleep 1
 	start-stop-daemon --start --quiet --pidfile \
 		/var/run/$NAME.pid --exec $DAEMON -- $DAEMON_OPTS
