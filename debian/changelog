@@ -1,3 +1,9 @@
+dns-flood-detector (1.10-3) UNRELEASED; urgency=low
+
+  * NOT RELEASED YET
+
+ -- Jan Wagner <waja@localhost>  Thu,  9 Nov 2006 20:49:10 +0100
+
 dns-flood-detector (1.10-2) unstable; urgency=low
 
   * fixed typo in initscript
