@@ -1,6 +1,6 @@
-dns-flood-detector (1.10-3) UNRELEASED; urgency=low
+dns-flood-detector (1.10-3) unstable; urgency=low
 
-  * NOT RELEASED YET
+  * using killall in init script to get daemon stopped
 
  -- Jan Wagner <waja@localhost>  Thu,  9 Nov 2006 20:49:10 +0100
 
