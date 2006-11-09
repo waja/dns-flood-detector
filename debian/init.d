@@ -17,7 +17,7 @@
 ### END INIT INFO
 
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
-DAEMON=/usr/sbin/dns-flood-detector
+DAEMON=/usr/bin/dns-flood-detector
 NAME=dns-flood-detector
 DESC=dns-flood-detector
 
