@@ -4,4 +4,3 @@ set -e
 killall -9 dns-flood-detector
 # End automatically added section
 
-#DEBHELPER#
