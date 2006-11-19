@@ -4,6 +4,8 @@
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
 
+include /usr/share/dpatch/dpatch.make
+
 CFLAGS += -D_BSD_SOURCE -Wall -g
 LDLIBS += -lpcap -lpthread -lm
 
@@ -14,14 +16,14 @@ else
 endif
 
 build: build-stamp
-build-stamp:
+build-stamp: patch-stamp
 	dh_testdir
 	# Add here commands to compile the package.
 	$(CC) $(CFLAGS) dns_flood_detector.c $(LDLIBS) -o dns_flood_detector
 
 	touch $@
 
-clean:
+clean: unpatch
 	dh_testdir
 	dh_testroot
 	rm -f build-stamp

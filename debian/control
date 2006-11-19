@@ -2,7 +2,7 @@ Source: dns-flood-detector
 Section: net
 Priority: optional
 Maintainer: Jan Wagner <waja@cyconet.org>
-Build-Depends: debhelper (>= 5), libpcap0.8-dev
+Build-Depends: debhelper (>= 5), dpatch, libpcap0.8-dev
 Standards-Version: 3.7.2
 
 Package: dns-flood-detector

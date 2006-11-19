@@ -1,3 +1,11 @@
+dns-flood-detector (1.10-4) unstable; urgency=low
+
+  * included fix_prototyp patch provided by "dann frazier <dannf@debian.org>"
+    (Closes: #399283).
+  * build depend to dpatch
+
+ -- Jan Wagner <waja@cyconet.org>  Sun, 19 Nov 2006 10:18:55 +0100
+
 dns-flood-detector (1.10-3) unstable; urgency=low
 
   * using killall in init script to get daemon stopped
