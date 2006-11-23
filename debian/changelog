@@ -1,3 +1,10 @@
+dns-flood-detector (1.12-1) unstable; urgency=low
+
+  * New upstream release
+  * modified fix_prototyp patch for upstream
+  
+ -- Jan Wagner <waja@cyconet.org>  Thu, 23 Nov 2006 13:35:11 +0100
+
 dns-flood-detector (1.10-4) unstable; urgency=low
 
   * included fix_prototyp patch provided by "dann frazier <dannf@debian.org>"
