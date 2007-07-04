@@ -3,6 +3,5 @@
 # installed at /etc/default/dns-flood-detector by the maintainer scripts
 
 # options that are passed to the Daemon.
-# HINT: leave "-b". If not stopping via init script will not work
-# here: bindsnap mode, be more verbose, alarm at > 5/s, stats every 3 secs
-DAEMON_OPTS="-b -v -v -t5 -w3"
+# here: daemon mode, be more verbose, alarm at > 5/s, stats every 3 secs
+DAEMON_OPTS="-d -v -v -t5 -w3"
