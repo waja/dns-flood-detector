@@ -1,7 +1,0 @@
-# Defaults for dns-flood-detector initscript
-# sourced by /etc/init.d/dns-flood-detector
-# installed at /etc/default/dns-flood-detector by the maintainer scripts
-
-# options that are passed to the Daemon.
-# here: daemon mode, be more verbose, alarm at > 5/s, stats every 3 secs
-DAEMON_OPTS="-d -v -v -t5 -w3"
