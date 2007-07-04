@@ -55,6 +55,7 @@ binary-arch: build install
 	dh_installchangelogs
 	dh_installdocs
 	dh_installman debian/dns-flood-detector.8
+	dh_installinit -- defaults 40
 	dh_link
 	dh_strip
 	dh_compress
