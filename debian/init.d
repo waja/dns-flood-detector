@@ -35,7 +35,7 @@ case "$1" in
 	echo -n "Starting $DESC: "
 	start-stop-daemon --start --quiet --pidfile /var/run/$NAME.pid \
 		--exec $DAEMON -- $DAEMON_OPTS
-	ps aux | grep $NAME | grep -v grep | tail -1 | awk '{ print $2 }' > /var/run/$NAME.pid
+	ps aux | grep $DAEMON | grep -v grep | tail -1 | awk '{ print $2 }' > /var/run/$NAME.pid
 	echo "$NAME."
 	;;
   stop)
@@ -50,7 +50,7 @@ case "$1" in
 		--exec $DAEMON
 	start-stop-daemon --start --quiet --pidfile /var/run/$NAME.pid \
 		--exec $DAEMON -- $DAEMON_OPTS
-	ps aux | grep $NAME | grep -v grep | tail -1 | awk '{ print $2 }' > /var/run/$NAME.pid
+	ps aux | grep $DAEMON | grep -v grep | tail -1 | awk '{ print $2 }' > /var/run/$NAME.pid
 	echo "$NAME."
 	;;
   *)
