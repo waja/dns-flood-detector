@@ -33,8 +33,9 @@ set -e
 case "$1" in
   start)
 	echo -n "Starting $DESC: "
-	start-stop-daemon --start --quiet --make-pidfile --background --pidfile /var/run/$NAME.pid \
+	start-stop-daemon --start --quiet --pidfile /var/run/$NAME.pid \
 		--exec $DAEMON -- $DAEMON_OPTS
+	ps aux | grep $NAME | grep -v grep | tail -1 | awk '{ print $2 }' > /var/run/$NAME.pid
 	echo "$NAME."
 	;;
   stop)
@@ -45,10 +46,11 @@ case "$1" in
 	;;
   restart|force-reload)
 	echo -n "Restarting $DESC: "
-	start-stop-daemon --stop --quiet --make-pidfile --background --pidfile /var/run/$NAME.pid \
+	start-stop-daemon --stop --quiet --pidfile /var/run/$NAME.pid \
 		--exec $DAEMON
 	start-stop-daemon --start --quiet --pidfile /var/run/$NAME.pid \
 		--exec $DAEMON -- $DAEMON_OPTS
+	ps aux | grep $NAME | grep -v grep | tail -1 | awk '{ print $2 }' > /var/run/$NAME.pid
 	echo "$NAME."
 	;;
   *)
