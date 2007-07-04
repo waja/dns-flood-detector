@@ -39,15 +39,15 @@ case "$1" in
 	;;
   stop)
 	echo -n "Stopping $DESC: "
-	start-stop-daemon --stop --quiet --pidfile /var/run/$NAME.pid \
-		--exec $DAEMON
-	killall -9 $NAME
+	#start-stop-daemon --stop --quiet --pidfile /var/run/$NAME.pid \
+	#	--exec $DAEMON
+	ps aux | grep $NAME | awk '{ print $2 }' | xargs kill -9
 	echo "$NAME."
 	;;
   restart|force-reload)
 	echo -n "Restarting $DESC: "
-	start-stop-daemon --stop --quiet --pidfile /var/run/$NAME.pid \
-		--exec $DAEMON
+	#start-stop-daemon --stop --quiet --pidfile /var/run/$NAME.pid \
+	#	--exec $DAEMON
 	ps aux | grep $NAME | awk '{ print $2 }' | xargs kill -9
 	sleep 1
 	start-stop-daemon --start --quiet --pidfile /var/run/$NAME.pid \
