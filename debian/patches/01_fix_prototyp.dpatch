@@ -1,0 +1,17 @@
+#!/bin/sh /usr/share/dpatch/dpatch-run
+## 01_fix_prototyp.dpatch by dann frazier <dannf@debian.org>
+##
+## DP: fix missing function prototype definition 
+
+@DPATCH@
+
+--- dns-flood-detector-1.10/dns_flood_detector.c~       2003-12-29 20:53:38.000000000 -0700
++++ dns-flood-detector-1.10/dns_flood_detector.c        2006-11-18 17:38:47.000000000 -0700
+@@ -79,6 +79,7 @@
+ #include <stdlib.h>
+ #include <fcntl.h>
+ #include <errno.h>
++#include <sys/socket.h>
+ #include <netinet/in_systm.h>
+ #include <netinet/in.h>
+ #include <netinet/ip.h>
