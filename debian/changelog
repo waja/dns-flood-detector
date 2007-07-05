@@ -2,6 +2,7 @@ dns-flood-detector (1.12-2) unstable; urgency=low
 
   * some cosmetic fixes to init script
   * make start-stop-daemon working instead of using kill (Closes: #431676).
+  * providing upgrade path via prerm
   * drop own maintainers scripts and make again use of debhelper
 
  -- Jan Wagner <waja@cyconet.org>  Wed, 04 Jul 2007 12:29:06 +0200
