@@ -1,3 +1,10 @@
+dns-flood-detector (1.12-3) unstable; urgency=low
+
+  * added Vcs- fields, moved Homepage into source header's field
+  * bump standards version to 3.7.3 
+
+ -- Jan Wagner <waja@cyconet.org>  Sun, 09 Dec 2007 22:48:23 +0100
+
 dns-flood-detector (1.12-2) unstable; urgency=low
 
   * some cosmetic fixes to init script

@@ -3,7 +3,10 @@ Section: net
 Priority: optional
 Maintainer: Jan Wagner <waja@cyconet.org>
 Build-Depends: debhelper (>= 5), dpatch, libpcap0.8-dev
-Standards-Version: 3.7.2
+Homepage: http://www.adotout.com/
+Vcs-Browser: https://trac.cyconet.org/debian/browser/debian/dns-flood-detector
+Vcs-Svn: https://trac.cyconet.org/svn/debian/dns-flood-detector
+Standards-Version: 3.7.3
 
 Package: dns-flood-detector
 Architecture: any
@@ -19,5 +22,3 @@ Description: detect abusive usage levels on high traffic nameservers
  "bindsnap" mode. In daemon mode, the tool will alarm via syslog. In bindsnap
  mode, the user is able to get near-real-time stats on usage to aid in more
  detailed troubleshooting.
- .
-  Homepage: <http://www.adotout.com/>
