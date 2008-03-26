@@ -1,0 +1,5 @@
+#!/bin/sh
+set -e
+# work without debhelper since only kill stops the app (for now)
+killall -9 dns-flood-detector
+

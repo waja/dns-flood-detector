@@ -1,0 +1,11 @@
+#!/bin/sh
+set -e
+
+if [ -x "/etc/init.d/dns-flood-detector" ]; then
+	update-rc.d dns-flood-detector defaults 40 >/dev/null
+	if [ -x "`which invoke-rc.d 2>/dev/null`" ]; then
+		invoke-rc.d dns-flood-detector start || exit $?
+	else
+		/etc/init.d/dns-flood-detector start || exit $?
+	fi
+fi
