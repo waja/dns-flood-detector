@@ -1,7 +1,7 @@
 dns-flood-detector (1.12-3) unstable; urgency=low
 
   * added Vcs- fields, moved Homepage into source header's field
-  * bump standards version to 3.7.3
+  * bump standards version to 3.7.3 (no changes needed)
   * change copyright of packaging to 2008 in debian/copyright
   * get rid of 'ps aux' in init script and preinst, using pidof instead
 
