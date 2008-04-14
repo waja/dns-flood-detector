@@ -1,11 +1,11 @@
-dns-flood-detector (1.12-3) UNREALESED; urgency=low
+dns-flood-detector (1.12-3) unstable; urgency=low
 
   * added Vcs- fields, moved Homepage into source header's field
   * bump standards version to 3.7.3
   * change copyright of packaging to 2008 in debian/copyright
   * get rid of 'ps aux' in init script and preinst, using pidof instead
 
- -- Jan Wagner <waja@cyconet.org>  Sun, 09 Dec 2007 22:48:23 +0100
+ -- Jan Wagner <waja@cyconet.org>  Mon, 14 Apr 2008 22:39:46 +0200
 
 dns-flood-detector (1.12-2) unstable; urgency=low
 
