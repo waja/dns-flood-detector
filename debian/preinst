@@ -3,6 +3,6 @@ set -e
 
 # generate correct pid file, for versions where was non or incorrect
 if [ "$1" = "upgrade" ] && [ "$2" ] && dpkg --compare-versions "$2" <= "1.12-1"; then
-	ps aux | grep /usr/bin/dns-flood-detector | head -1 | awk '{ print $2 }' > /var/run/dns-flood-detector.pid
+	/bin/pidof dns-flood-detector > /var/run/dns-flood-detector.pid
 fi
 #DEBHELPER#
