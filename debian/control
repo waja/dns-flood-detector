@@ -6,7 +6,7 @@ Build-Depends: debhelper (>= 5), dpatch, libpcap0.8-dev
 Homepage: http://www.adotout.com/
 Vcs-Browser: https://trac.cyconet.org/debian/browser/debian/dns-flood-detector
 Vcs-Svn: https://trac.cyconet.org/svn/debian/dns-flood-detector
-Standards-Version: 3.7.3
+Standards-Version: 3.8.0
 
 Package: dns-flood-detector
 Architecture: any
