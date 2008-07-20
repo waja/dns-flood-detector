@@ -1,6 +1,7 @@
 dns-flood-detector (1.12-4) UNRELEASED; urgency=low
 
   * Updating standards version to 3.8.0, no changes needed
+  * implement machine-interpretable copyright file
 
  -- Jan Wagner <waja@cyconet.org>  Sat, 07 Jun 2008 11:38:13 +0200
 
