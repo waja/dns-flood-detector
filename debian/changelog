@@ -1,3 +1,9 @@
+dns-flood-detector (1.12-6) UNRELEASED; urgency=low
+
+  * add "Copyright" to all copyrights in debian/copyright
+
+ -- Jan Wagner <waja@cyconet.org>  Sun, 26 Jul 2009 00:42:50 +0200
+
 dns-flood-detector (1.12-5) unstable; urgency=low
 
   * Updating standards version to 3.8.2, no changes needed

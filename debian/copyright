@@ -6,11 +6,11 @@ Upstream-Maintainer: Dennis Opacki <dopacki@adotout.com>
 Upstream-Source: http://www.adotout.com/
 
 Files: *
-Copyright: (C) 2003 Dennis Opacki <dopacki@adotout.com>
+Copyright: Copyright (C) 2003 Dennis Opacki <dopacki@adotout.com>
 License: GPL-2+
 
 Files: debian/*
-Copyright: (C) 2006, 2008 Jan Wagner <waja@cyconet.org>
+Copyright: Copyright (C) 2006, 2008 Jan Wagner <waja@cyconet.org>
 License: GPL-2+
 
 License: GPL-2+
