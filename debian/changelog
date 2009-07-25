@@ -1,6 +1,7 @@
 dns-flood-detector (1.12-5) UNRELEASED; urgency=low
 
   * Updating standards version to 3.8.2, no changes needed
+  * remove absolut path of pidof from preinst
 
  -- Jan Wagner <waja@cyconet.org>  Sun, 26 Jul 2009 00:31:45 +0200
 
