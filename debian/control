@@ -4,9 +4,9 @@ Priority: optional
 Maintainer: Jan Wagner <waja@cyconet.org>
 Build-Depends: debhelper (>= 5), dpatch, libpcap0.8-dev
 Homepage: http://www.adotout.com/
-Vcs-Browser: https://trac.cyconet.org/debian/browser/debian/dns-flood-detector
-Vcs-Svn: https://trac.cyconet.org/svn/debian/dns-flood-detector
-Standards-Version: 3.8.3
+Vcs-Browser: https://scm.uncompleted.org/projects/debian/repository/show/dns-flood-detector
+Vcs-Svn: https://scm.uncompleted.org/svn/debian/dns-flood-detector
+Standards-Version: 3.8.4
 
 Package: dns-flood-detector
 Architecture: any
