@@ -5,7 +5,7 @@ dns-flood-detector (1.12-6) UNRELEASED; urgency=low
     - Add README.source
   * Migrate Vcs-Fields over to scm.uncompleted.org
   * Add 1.0 to debian/source/format
-
+  * Add ${misc:Depends} to dependencies
 
  -- Jan Wagner <waja@cyconet.org>  Sun, 26 Jul 2009 00:42:50 +0200
 
