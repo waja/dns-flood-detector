@@ -1,6 +1,6 @@
 dns-flood-detector (1.12-7) UNRELEASED; urgency=low
 
-  * NOT RELEASED YET
+  * Add trailing trunk/ at Vcs-Svn-field
 
  -- Jan Wagner <waja@cyconet.org>  Wed, 10 Mar 2010 00:09:56 +0100
 
