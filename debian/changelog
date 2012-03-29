@@ -1,3 +1,9 @@
+dns-flood-detector (1.12-8) UNRELEASED; urgency=low
+
+  * NOT RELEASED YET
+
+ -- Jan Wagner <waja@cyconet.org>  Thu, 29 Mar 2012 19:25:37 +0200
+
 dns-flood-detector (1.12-7) unstable; urgency=low
 
   * Add trailing trunk/ at Vcs-Svn-field
