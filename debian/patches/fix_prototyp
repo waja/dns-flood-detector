@@ -1,9 +1,5 @@
-#!/bin/sh /usr/share/dpatch/dpatch-run
-## 01_fix_prototyp.dpatch by dann frazier <dannf@debian.org>
-##
-## DP: fix missing function prototype definition 
-
-@DPATCH@
+From: dann frazier <dannf@debian.org>
+Subject: fix missing function prototype definition
 
 --- dns-flood-detector-1.10/dns_flood_detector.c~       2003-12-29 20:53:38.000000000 -0700
 +++ dns-flood-detector-1.10/dns_flood_detector.c        2006-11-18 17:38:47.000000000 -0700

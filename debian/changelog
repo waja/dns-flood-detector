@@ -2,6 +2,7 @@ dns-flood-detector (1.12-7) UNRELEASED; urgency=low
 
   * Add trailing trunk/ at Vcs-Svn-field
   * Updating standards version to 3.9.3, no changes needed
+  * Switch over to packaging format 3.0 (quit) (closes: #664409)
 
  -- Jan Wagner <waja@cyconet.org>  Wed, 10 Mar 2010 00:09:56 +0100
 
