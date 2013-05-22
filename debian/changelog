@@ -1,6 +1,8 @@
 dns-flood-detector (1.20-1) UNRELEASED; urgency=low
 
   * New upstream release
+  * Enable Hardening
+    - build-dep on hardening-wrapper
 
  -- Jan Wagner <waja@cyconet.org>  Wed, 22 May 2013 13:40:57 +0200
 
