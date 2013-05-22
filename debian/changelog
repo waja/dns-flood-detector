@@ -1,8 +1,8 @@
-dns-flood-detector (1.12-8) UNRELEASED; urgency=low
+dns-flood-detector (1.20-1) UNRELEASED; urgency=low
 
-  * NOT RELEASED YET
+  * New upstream release
 
- -- Jan Wagner <waja@cyconet.org>  Thu, 29 Mar 2012 19:25:37 +0200
+ -- Jan Wagner <waja@cyconet.org>  Wed, 22 May 2013 13:40:57 +0200
 
 dns-flood-detector (1.12-7) unstable; urgency=low
 
