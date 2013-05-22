@@ -4,6 +4,10 @@
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
 
+# hardening
+export DEB_BUILD_HARDENING=1
+CFLAGS:=$(shell dpkg-buildflags --get CFLAGS)
+
 CFLAGS += -D_BSD_SOURCE -Wall -g
 LDLIBS += -lpcap -lpthread -lm
 
