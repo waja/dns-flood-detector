@@ -1,4 +1,4 @@
-DNS FLood Detector 1.12
+DNS FLood Detector 1.2
 Dennis Opacki
 dopacki@adotout.com
 
@@ -21,6 +21,16 @@ By default, it will count dns queries directed to any address in the same
 network as the primary IP address on the interface being watched; the -A,
 -M, and -Q options can be used to modify this behaviour.
 
+As of version 1.2, DNS Flood Detector can now send source IP request
+data to a network-based collector as JSON. This lets you gather near
+real-time information about who is using your DNS servers, and from
+where. I've included a sample application called dns_flood_collector.pl,
+which you can use to receive and report these data. The output of this
+program can be easily fed into a graphing tool, such as Caida's 
+plot-latlong:
+
+http://www.caida.org/tools/visualization/plot-latlong/
+
 How do I build it?
 
 Execute ./configure.pl to select the appropriate make target. Then simply
@@ -41,7 +51,7 @@ What platforms does it work on?
 
 Linux, BSDI, FreeBSD, Mac OSX, Solaris
 
-Will it run under Windows {95,98,NT,2000,XP}?  
+Will it run under Windows {95,98,NT,2000,XP,2003,2008 or Win7}?  
 
 Maybe. I haven't tried. If it doesn't, feel free to submit a fix. 
 
@@ -62,6 +72,9 @@ Usage: ./dns_flood_detector [OPTION]
 -d                     run in background in daemon mode
 -D	               dump dns packets (implies -b)
 -v                     verbose output - use again for more verbosity
+-s                     send source IP stats to collector as JSON
+-z N.N.N.N             address to send stats to (default 226.1.1.2)
+-p N                   UDP port to send stats to (default 2000)
 -h                     display this usage information
 
 Sample Output:

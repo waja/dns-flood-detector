@@ -30,6 +30,13 @@
 #endif
 #define NS_MAXDNAME 1025
 #define MAXSYSLOG 192
+#define MAXMESSAGE 1200
+#define MAXDATALET 64
+#define MAXHEAD 300
+#define MAX_TIME_LEN 20
+#define DEFAULT_PORT 2000
+#define DEFAULT_IP "226.1.1.2"
+#define HOST_NAME_MAX 254
 
 // evil Solaris hack
 #ifdef __sun__
@@ -41,10 +48,12 @@ typedef uint32_t u_int32_t;
 // prototypes
 void handle_IP(u_char *args,const struct pcap_pkthdr* pkthdr,const u_char* packet);
 int calculate_averages();
+int saddr_stats(int sock, struct sockaddr_in addr, char *hostname);
 int scour_bucket(int i);
 int find_bucket(struct in_addr *ip_src);
 int daemonize(void);
 int malloc_fail(char * var, int size);
+int microsleep(unsigned int usec);
 
 // data structures
 struct my_dns {

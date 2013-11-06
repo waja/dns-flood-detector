@@ -1,5 +1,5 @@
 CFLAGS+=-Wall -O -g -I/usr/local/include -I/usr/include
-LDLIBS=-L/usr/local/lib -lpcap -lpthread -lm
+LDLIBS=-lpcap -lpthread -lm
 
 all: dns_flood_detector
 	strip dns_flood_detector
