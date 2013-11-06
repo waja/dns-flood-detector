@@ -1,0 +1,91 @@
+DNS FLood Detector 1.2
+Dennis Opacki
+dopacki@adotout.com
+
+
+What is DNS Flood Detector?  
+
+DNS Flood Detector was developed to detect abusive usage levels on high 
+traffic nameservers and to enable quick response to the use of one's 
+nameserver to facilitate spam. DNS Flood Detector is distributed under the 
+Gnu Public License (see included LICENSE file for details).
+
+How does it work?    
+
+DNS Flood Detector uses libpcap (in non-promiscuous mode) to monitor 
+incoming  dns queries to a nameserver. The tool may be run in one of two 
+modes, either  daemon mode or "bindsnap" mode. In daemon mode, the tool 
+will alarm via syslog. In bindsnap mode, the user is able to get 
+near-real-time stats on usage to aid in more detailed troubleshooting. 
+By default, it will count dns queries directed to any address in the same
+network as the primary IP address on the interface being watched; the -A,
+-M, and -Q options can be used to modify this behaviour.
+
+As of version 1.2, DNS Flood Detector can now send source IP request
+data to a network-based collector as JSON. This lets you gather near
+real-time information about who is using your DNS servers, and from
+where. I've included a sample application called dns_flood_collector.pl,
+which you can use to receive and report these data. The output of this
+program can be easily fed into a graphing tool, such as Caida's 
+plot-latlong:
+
+http://www.caida.org/tools/visualization/plot-latlong/
+
+How do I build it?
+
+Execute ./configure.pl to select the appropriate make target. Then simply
+type "make".
+
+Why was it written?  
+
+I wrote DNS Flood Detector because the fifty or so public recursive 
+nameservers I am responsible for were being abused by both customers and 
+non-customers. DNS Flood Detector allows for prompt action when anomalous 
+conditions are detected. 
+
+What do I need to use it?  
+
+You need libpcap and a little bit of patience.
+
+What platforms does it work on?
+
+Linux, BSDI, FreeBSD, Mac OSX, Solaris
+
+Will it run under Windows {95,98,NT,2000,XP,2003,2008 or Win7}?  
+
+Maybe. I haven't tried. If it doesn't, feel free to submit a fix. 
+
+What does it look like?  
+
+Usage: ./dns_flood_detector [OPTION]
+
+-i IFNAME              specify interface to listen on
+-t N                   alarm at >N queries per second
+-a N                   reset alarm after N seconds
+-w N                   calculate stats every N seconds
+-x N                   create N buckets
+-m N                   mark total query rate every N seconds
+-A addr                filter for specific address
+-M mask                netmask for filter (in conjunction with -A)
+-Q                     don't filter by local interface address
+-b                     run in foreground in bindsnap mode
+-d                     run in background in daemon mode
+-D	               dump dns packets (implies -b)
+-v                     verbose output - use again for more verbosity
+-s                     send source IP stats to collector as JSON
+-z N.N.N.N             address to send stats to (default 226.1.1.2)
+-p N                   UDP port to send stats to (default 2000)
+-h                     display this usage information
+
+Sample Output:
+
+dopacki:~$ sudo ./dns_flood_detector -v -v -b -t10
+[15:14:56] source [192.168.1.45] - 0 qps tcp : 24 qps udp [8 qps A] [16 qps PTR] 
+[15:14:56] source [10.0.24.2] - 0 qps tcp : 15 qps udp [15 qps A] 
+[15:15:06] source [192.168.1.45] - 0 qps tcp : 24 qps udp [8 qps A] [16 qps PTR] 
+[15:15:06] source [10.0.24.2] - 0 qps tcp : 15 qps udp [14 qps A] 
+[15:15:16] source [192.168.1.45] - 0 qps tcp : 23 qps udp [7 qps A] [15 qps PTR] 
+
+What if I have questions?  
+
+You can e-mail me at dopacki@adotout.com 
