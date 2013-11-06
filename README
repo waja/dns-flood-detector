@@ -1,0 +1,74 @@
+DNS FLood Detector 1.10
+Dennis Opacki
+dopacki@adotout.com
+
+
+What is DNS Flood Detector?  
+
+DNS Flood Detector was developed to detect abusive usage levels on high 
+traffic nameservers and to enable quick response to the use of one's 
+nameserver to facilitate spam. DNS Flood Detector is distributed under the 
+Gnu Public License (see included LICENSE file for details).
+
+How does it work?    
+
+DNS Flood Detector uses libpcap (in non-promiscuous mode) to monitor 
+incoming  dns queries to a nameserver. The tool may be run in one of two 
+modes, either  daemon mode or "bindsnap" mode. In daemon mode, the tool 
+will alarm via syslog. In bindsnap mode, the user is able to get 
+near-real-time stats on usage to aid in more detailed troubleshooting. 
+
+How do I build it?
+
+Execute ./configure.pl to select the appropriate make target. Then simply
+type "make".
+
+Why was it written?  
+
+I wrote DNS Flood Detector because the fifty or so public recursive 
+nameservers I am responsible for were being abused by both customers and 
+non-customers. DNS Flood Detector allows for prompt action when anomalous 
+conditions are detected. 
+
+What do I need to use it?  
+
+You need libpcap and a little bit of patience.
+
+What platforms does it work on?
+
+Linux, BSDI, FreeBSD, Mac OSX, Solaris
+
+Will it run under Windows {95,98,NT,2000,XP}?  
+
+Maybe. I haven't tried. If it doesn't, feel free to submit a fix. 
+
+What does it look like?  
+
+Usage: ./dns_flood_detector [OPTION]
+
+-i IFNAME              specify interface to listen on
+-t N                   alarm at >N queries per second
+-a N                   reset alarm after N seconds
+-w N                   calculate stats every N seconds
+-x N                   create N buckets
+-m N                   mark total query rate every N seconds
+-b                     run in foreground in bindsnap mode
+-d                     run in background in daemon mode
+-v                     verbose output - use again for more verbosity
+-h                     display this usage information
+
+Sample Output:
+
+dopacki:~$ sudo ./dns_flood_detector -v -v -b -t10
+[15:14:56] source [192.168.1.45] - 0 qps tcp : 24 qps udp [8 qps A] [16 
+qps PTR] 
+[15:14:56] source [10.0.24.2] - 0 qps tcp : 15 qps udp [15 qps A] 
+[15:15:06] source [192.168.1.45] - 0 qps tcp : 24 qps udp [8 qps A] [16 
+qps PTR] 
+[15:15:06] source [10.0.24.2] - 0 qps tcp : 15 qps udp [14 qps A] 
+[15:15:16] source [192.168.1.45] - 0 qps tcp : 23 qps udp [7 qps A] [15 
+qps PTR] 
+
+What if I have questions?  
+
+You can e-mail me at dopacki@adotout.com 
