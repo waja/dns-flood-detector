@@ -29,7 +29,7 @@
 #define ETHER_HDRLEN 14
 #endif
 #define NS_MAXDNAME 1025
-#define MAXSYSLOG 128
+#define MAXSYSLOG 192
 
 // evil Solaris hack
 #ifdef __sun__
@@ -40,7 +40,12 @@ typedef uint32_t u_int32_t;
 
 // prototypes
 void handle_IP(u_char *args,const struct pcap_pkthdr* pkthdr,const u_char* packet);
-        
+int calculate_averages();
+int scour_bucket(int i);
+int find_bucket(struct in_addr *ip_src);
+int daemonize(void);
+int malloc_fail(char * var, int size);
+
 // data structures
 struct my_dns {
         u_int16_t dns_id;           /* query identification number */
@@ -53,7 +58,7 @@ struct my_dns {
 };
  
 struct bucket {
-        char * ip_addr;
+        struct in_addr ip_addr;
         unsigned int tcp_count;
         unsigned int udp_count;
         unsigned int qps;

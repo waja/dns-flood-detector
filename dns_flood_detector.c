@@ -22,8 +22,13 @@
 			(default 50)
 	-m n		mark overall query rate every n seconds
 			(default disabled)
+	-A addr		filter for specific address
+	-M mask		netmask for filter (in conjunction with -A)
+	-Q		monitor any addresses (default is to filter only for
+			primary addresses on chosen interface)
 	-b		run in foreground in "bindsnap" mode
 	-d		run in background in "daemon" mode
+	-D		dump dns packets (implies -b)
 	-v		detailed information (use twice for more detail)
 	-h		usage info
 
@@ -72,6 +77,22 @@
     10/22/2003 - Added 'mark status' option via '-m' - <dopacki@adotout.com>
     10/23/2003 - Code cleanup in verbose syslogging - <dopacki@adotout.com>
 
+    --- new in v1.11 ---
+    06/14/2005 - added A6, AAAA, ANY qtypes - <jwestfall@surrealistic.net>
+                 examine all packets with >= 1 qdcount - <jwestfall@surrealistic.net>
+                 stop processing packet if invalid dns char - <jwestfall@surrealistic.net>
+                 fix tcp parsing - <jwestfall@surrealistic.net>
+                 add option_D to dump packets - <jwestfall@surrealistic.net>
+
+    --- new in v1.12 ---
+    03/03/2006 - added address filtering options - <erikm@buh.org>
+                 fix segfault using argv[0] after getopt - <erikm@buh.org>
+                 fix rounding from float/int conversions, use unsigned more consistently - <erikm@buh.org>
+                 clean up to work with -Wall - <erikm@buh.org>
+                 show fractional qps rates for totals - <erikm@buh.org> 
+                 store addresses raw, instead of as text (speedup/reduce memory usage) - <erikm@buh.org>
+                 fix crash on long syslog messages - <jwestfall@surrealistic.net>
+
 ********************************************************************************/
 
 #include <pcap.h>
@@ -84,6 +105,7 @@
 #include <netinet/ip.h>
 #include <netinet/tcp.h>
 #include <netinet/udp.h>
+#include <arpa/inet.h>
 #ifdef __bsdi__
 #include <net/if_ethernet.h>
 #else
@@ -99,6 +121,8 @@
 #include <math.h>
 #include <signal.h>
 #include <syslog.h>
+#include <string.h>
+#include <sys/stat.h>
 #include "dns_flood_detector.h"
 
 // global variables and their defaults
@@ -111,10 +135,17 @@ int option_x = 50;
 int option_m = 0;
 int option_b = 0;
 int option_d = 0;
+int option_D = 0;
 int option_v = 0;
 int option_h = 0;
+int option_Q = 0;
+int option_A = 0;
+int option_M = 0;
 int totals = 0;
-char VERSION[] = "1.10";
+char VERSION[] = "1.12";
+
+// 255.255.255.255 is invalid as a src IP address; we'll use it to mark empty buckets
+#define BCAST 0xffFFffFF
 
 // this is our statistics thread
 void *run_stats () {
@@ -131,27 +162,28 @@ void *run_stats () {
 
 // calculate the running average within each bucket
 int calculate_averages() {
-	u_int i,j,delta,cursize,newsize,qps;
+	u_int i,j,delta,cursize,qps;
+	int newsize;
+	float qpsf;
 	char st_time[10];
 	time_t now = time(0);
-	u_int types[] = {1,2,5,6,12,15,252,0};
-	u_char *type;
-	u_char *target;
-	char *names[] = {"A","NS","CNAME","SOA","PTR","MX","AXFR",""};
+	u_int types[] = {1,2,5,6,12,15,28,38,252,255,0};
+	char *target;
+	char *names[] = {"A","NS","CNAME","SOA","PTR","MX","AAAA","A6","AXFR","ANY",""};
 	struct tm *raw_time = localtime(&now);
 	snprintf(st_time, 9, "%02d:%02d:%02d",raw_time->tm_hour,raw_time->tm_min,raw_time->tm_sec);
 
 	for (i=0; i<option_x; i++) {
 
 		// only process valid buckets
-		if ( bb[i]->ip_addr != NULL ) {
+		if ( bb[i]->ip_addr.s_addr != BCAST) {
 			delta = now - bb[i]->first_packet;
 
 			// let's try to avoid a divide-by-zero, shall we?
 			if (delta > 1 ) {
 	
 				// round our average and save it in the bucket
-				bb[i]->qps = (int)ceil( (float)((((float)bb[i]->tcp_count) + bb[i]->udp_count) / delta));
+				bb[i]->qps = (u_int)ceil( (bb[i]->tcp_count + bb[i]->udp_count) / (float)delta);
 
 				// handle threshold crossing
 				if ( bb[i]->qps > option_t ) {
@@ -160,18 +192,19 @@ int calculate_averages() {
 					// display detail to either syslog or stdout
 					if ( option_b ) {
 						if ( ! option_v ) {
-							printf("[%s] source [%s] - %d qps\n",st_time,bb[i]->ip_addr,bb[i]->qps);
+							printf("[%s] source [%s] - %u qps\n",st_time,inet_ntoa(bb[i]->ip_addr),bb[i]->qps);
 							fflush(stdout);
 						}
 						else {
-							printf("[%s] source [%s] - %d qps tcp : %d qps udp ",st_time,bb[i]->ip_addr,
-								(int)ceil( (float)(bb[i]->tcp_count/delta)),
-								(int)ceil( (float)(bb[i]->udp_count/delta))
+							printf("[%s] source [%s] - %u qps tcp : %u qps udp ",st_time,inet_ntoa(bb[i]->ip_addr),
+								(u_int)ceil( ((float)bb[i]->tcp_count/delta)),
+								(u_int)ceil( ((float)bb[i]->udp_count/delta))
 							);
 							if ( option_v >1 ) {
 								for (j=0;types[j];j++) {
-									if ((int)ceil((float)(bb[i]->qstats[types[j]]/delta))){
-										printf("[%d qps %s] ",(int)ceil((float)(bb[i]->qstats[types[j]]/delta)),names[j]);
+									qps = (u_int)ceil((float)bb[i]->qstats[types[j]]/delta);
+									if (qps){
+										printf("[%u qps %s] ",qps,names[j]);
 									}
 								}
 							}
@@ -185,21 +218,21 @@ int calculate_averages() {
 
 							// display appropriate level of detail via syslog
 							if ( ! option_v ) {
-								syslog(LOG_NOTICE,"source [%s] - %d qps\n",bb[i]->ip_addr,bb[i]->qps);
+								syslog(LOG_NOTICE,"source [%s] - %u qps\n",inet_ntoa(bb[i]->ip_addr),bb[i]->qps);
 							}
 							else if (option_v > 1) {
 								target = (char *)malloc(sizeof(char)*MAXSYSLOG);
 								newsize = MAXSYSLOG;
-								cursize = snprintf(target,newsize,"source [%s] - %d tcp qps : %d udp qps ",bb[i]->ip_addr,
-										(int)ceil( (float)(bb[i]->tcp_count/delta)),				
-										(int)ceil( (float)(bb[i]->udp_count/delta))
+								cursize = snprintf(target,newsize,"source [%s] - %u tcp qps : %u udp qps ",inet_ntoa(bb[i]->ip_addr),
+										(u_int)ceil( ((float)bb[i]->tcp_count/delta)),				
+										(u_int)ceil( ((float)bb[i]->udp_count/delta))
 									  );
 								newsize-=cursize;
 	
 								for (j=0;types[j];j++ ) {
-									qps = (u_int)ceil((float)(bb[i]->qstats[types[j]]/delta));
+									qps = (u_int)ceil(((float)bb[i]->qstats[types[j]]/delta));
 									if ( ( qps > 0)  && ( newsize > 1 ) ) {
-										cursize = snprintf(target+(MAXSYSLOG-newsize),newsize,"[%d qps %s] ",qps,names[j]);
+										cursize = snprintf(target+(MAXSYSLOG-newsize),newsize,"[%u qps %s] ",qps,names[j]);
 										newsize-=cursize;
 									}
 								}
@@ -210,9 +243,9 @@ int calculate_averages() {
 								free(target);
 							}
 							else {
-								syslog(LOG_NOTICE,"source [%s] - %d tcp qps - %d udp qps\n",bb[i]->ip_addr,
-									(int)ceil( (float)(bb[i]->tcp_count/delta)),
-									(int)ceil( (float)(bb[i]->udp_count/delta))
+								syslog(LOG_NOTICE,"source [%s] - %u tcp qps - %u udp qps\n",inet_ntoa(bb[i]->ip_addr),
+									(u_int)ceil( ((float)bb[i]->tcp_count/delta)),
+									(u_int)ceil( ((float)bb[i]->udp_count/delta))
 								);
 							}
 
@@ -226,17 +259,17 @@ int calculate_averages() {
 	}
 	
 	// 'mark stats' if required and it is time
-	delta = now - bb[totals]->first_packet;
+	delta = (u_int)(now - bb[totals]->first_packet);
 	if ( (option_m > 0)&&(delta > 1)&&(delta >= option_m) ) {
 	
 		// handle bindsnap mode 
 		if (option_b) {
-			printf("[%s] totals - %d qps tcp : %d qps udp ",st_time,(int)ceil( (float)(bb[totals]->tcp_count/delta)),(int)ceil( (float)(bb[totals]->udp_count/delta)));
+			printf("[%s] totals - %3.2f qps tcp : %3.2f qps udp ",st_time, ((float)bb[totals]->tcp_count/delta),((float)bb[totals]->udp_count/delta));
 			if (option_v) {
 				for (j=0;types[j];j++) {
-					qps = (u_int)ceil((float)(bb[totals]->qstats[types[j]]/delta));
-					if (qps){
-						printf("[%d qps %s] ",qps,names[j]);
+					qpsf = ((float)bb[totals]->qstats[types[j]]/delta);
+					if (qpsf > 0){
+						printf("[%3.2f qps %s] ",qpsf,names[j]);
 					}
 				}
 			}
@@ -248,16 +281,16 @@ int calculate_averages() {
 			if (option_v) {
 				target = (char *)malloc(sizeof(char)*MAXSYSLOG);
 				newsize = MAXSYSLOG;
-				cursize = snprintf(target,newsize,"[totals] - %d tcp qps : %d udp qps ",
-						(int)ceil( (float)(bb[totals]->tcp_count/delta)),				
-						(int)ceil( (float)(bb[totals]->udp_count/delta))
+				cursize = snprintf(target,newsize,"[totals] - %3.2f tcp qps : %3.2f udp qps ",
+						((float)bb[totals]->tcp_count/delta),				
+						((float)bb[totals]->udp_count/delta)
 					  );
 				newsize-=cursize;
 	
 				for (j=0;types[j];j++ ) {
-					qps = (u_int)ceil((float)(bb[totals]->qstats[types[j]]/delta));
-					if ( ( qps > 0)  && ( newsize > 1 ) ) {
-							cursize = snprintf(target+(MAXSYSLOG-newsize),newsize,"[%d qps %s] ",qps,names[j]);
+					qpsf = ((float)bb[totals]->qstats[types[j]]/delta);
+					if ( ( qpsf > 0)  && ( newsize > 1 ) ) {
+							cursize = snprintf(target+(MAXSYSLOG-newsize),newsize,"[%3.2f qps %s] ",qpsf,names[j]);
 							newsize-=cursize;
 					}
 				}
@@ -268,9 +301,9 @@ int calculate_averages() {
 				free(target);
 			}
 			else {
-				syslog(LOG_NOTICE,"[totals] - %d tcp qps : %d udp qps\n",
-					(int)ceil( (float)(bb[totals]->tcp_count/delta)),
-					(int)ceil( (float)(bb[totals]->udp_count/delta))
+				syslog(LOG_NOTICE,"[totals] - %3.2f tcp qps : %3.2f udp qps\n",
+					((float)bb[totals]->tcp_count/delta),
+					((float)bb[totals]->udp_count/delta)
 				);
 			}
 		}	
@@ -280,6 +313,17 @@ int calculate_averages() {
 	return 1;
 }
 
+int valid_dns_char(char c) {
+
+	if((c >= '0' && c <= '9') 
+	|| (c >= 'a' && c <= 'z')
+	|| (c >= 'A' && c <= 'Z')
+	|| (c == '-') 
+	|| (c == '_')) // is valid for SRV records. 
+		return 1;
+
+	return 0; 
+}
 // purge and initialize all buckets
 void init_buckets() {
 	u_int i;
@@ -289,7 +333,6 @@ void init_buckets() {
 	if ( ( bb = malloc( sizeof(struct bucket *) * (option_x+1)) ) == NULL ) malloc_fail("bb", sizeof(struct bucket *) * (option_x+1));
 	for (i=0; i <=option_x; i++ ) {
 		if ( ( bb[i] = (struct bucket *)malloc( sizeof(struct bucket) ) ) == NULL) malloc_fail("bb[i]", sizeof(struct bucket) );
-		bb[i]->ip_addr=NULL;
 		scour_bucket(i);
 	}
 	pthread_mutex_unlock(&stats_lock);
@@ -299,10 +342,7 @@ void init_buckets() {
 int scour_bucket( int i ) {
 	int j;
 
-	if ( bb[i]->ip_addr != NULL ) {
-		free ( bb[i]->ip_addr );
-	}
-	bb[i]->ip_addr=NULL;
+	bb[i]->ip_addr.s_addr=BCAST;
 	bb[i]->tcp_count=0;
 	bb[i]->udp_count=0;
 	bb[i]->qps=0;
@@ -317,7 +357,7 @@ int scour_bucket( int i ) {
 }
 
 // add a packet to a bucket
-int add_to_bucket ( char * ip_src, int ip_proto, int num_queries, u_int8_t qtype) {
+int add_to_bucket ( struct in_addr *ip_src, int ip_proto, int num_queries, u_int8_t qtype) {
 	int bucket = 0;
 
 	// get the bucket to put packet in	
@@ -343,14 +383,14 @@ int add_to_bucket ( char * ip_src, int ip_proto, int num_queries, u_int8_t qtype
 }
 
 // figure out where to put this packet
-int find_bucket(char *ip_src) {
+int find_bucket(struct in_addr *ip_src) {
 	int i, bucket=0;
 	time_t oldest=0;
 
 	// look for an existing bucket for this IP
 	for (i=0; i< option_x; i++ ){
-		// ip field of bucket is not null and seems to match the ip we are checking
-		if ((bb[i]->ip_addr != NULL)&&(strncmp(bb[i]->ip_addr, ip_src, strlen(bb[i]->ip_addr))==0)) {
+		// ip field of bucket seems to match the ip we are checking
+		if (bb[i]->ip_addr.s_addr == ip_src->s_addr) {
 			return i;
 		}
 	}
@@ -359,14 +399,20 @@ int find_bucket(char *ip_src) {
 	for (i=0; i< option_x; i++ ) {
 
 		// found an unused one - clean it, init it, and return it
-		if ( bb[i]->ip_addr == NULL ) {
+		if ( bb[i]->ip_addr.s_addr == BCAST ) {
 			scour_bucket(i);
-			if ( ( bb[i]->ip_addr = (char *)strdup(ip_src) ) == NULL) malloc_fail("bb[i]->ip_addr", strlen(ip_src) );
+			bb[i]->ip_addr.s_addr = ip_src->s_addr;
 			return i;
 		}
 
 		// find the most stagnant bucket in case we need it
 		// avoids another loop through the buckets
+		// TODO - should we autoflush buckets after some idle time,
+		//        or after alarming?  fixes the case where
+		//        alarms are unlikely to reappear even if a client
+		//        resumes flooding if there isn't bucket contention
+		//        churning them out and resetting the timer for the rate
+		//        calculation...
 		if ( ( bb[i]->last_packet != 0 ) && ((oldest==0)||( bb[i]->last_packet < oldest))) {
 			oldest = bb[i]->last_packet;
 			bucket = i;			
@@ -376,7 +422,7 @@ int find_bucket(char *ip_src) {
 	// use the most stagnant bucket since all are in use
 	// clean it, init it, and return it
 	scour_bucket(bucket);
-	if ( ( bb[bucket]->ip_addr = (char *)strdup(ip_src) ) == NULL) malloc_fail("bb[bucket]->ip_addr", strlen(ip_src) );
+	bb[i]->ip_addr.s_addr = ip_src->s_addr;
 
 	return bucket;
 }
@@ -391,10 +437,10 @@ void handle_IP(u_char *args, const struct pcap_pkthdr* pkthdr,const u_char* pack
 	u_int caplen = pkthdr->caplen;
 	u_int hlen,off,version;
 	unsigned char dname[NS_MAXDNAME]="";
-	char *ip_src;
+	struct in_addr ip_src;
 	unsigned char *data;
-	u_int i,len,dpos;
-	u_int8_t qtype,qclass,tlen;
+	u_int len,dpos;
+	u_int8_t qtype,tlen;
 
 	// skip the ethernet header
 	length -= sizeof(struct ether_header); 
@@ -431,8 +477,8 @@ void handle_IP(u_char *args, const struct pcap_pkthdr* pkthdr,const u_char* pack
 	off = ntohs(ip->ip_off);
 	if((off & 0x1fff) == 0 ) {
 
-		// get the source ip as a string (probably more efficient to use decimal)
-		ip_src = (char *)inet_ntoa(ip->ip_src);
+		// get the source ip
+		ip_src.s_addr = ip->ip_src.s_addr;
 
 		// process udp packets
 		if ( ip->ip_p == 17 ) {
@@ -457,13 +503,14 @@ void handle_IP(u_char *args, const struct pcap_pkthdr* pkthdr,const u_char* pack
 			if (! tcp->th_flags & TH_PUSH) return;
 	
 			// try to make sure it is safe to cast packet into dns structure
-			if ( (sizeof(struct my_dns)+sizeof(struct ether_header)+sizeof(struct ip)+(tcp->th_off * sizeof(u_int32_t))) >= caplen ) {
+			if ( (sizeof(struct my_dns)+sizeof(struct ether_header)+sizeof(struct ip)+(tcp->th_off * sizeof(u_int32_t)) + sizeof(u_int16_t)) >= caplen ) {
 				return;
 			}
 			else {
 				// populate dns header
-				dns = (struct my_dns *) ( (char *) packet + sizeof(struct ether_header)+ sizeof (struct ip) + (tcp->th_off * sizeof(u_int32_t)));
-				data = (char *) packet + sizeof(struct ether_header) + sizeof (struct ip) + (tcp->th_off * sizeof(u_int32_t)) + sizeof(struct my_dns);
+				// tcp dns lookups also include a 16bit length field = dns header + data.
+				dns = (struct my_dns *) ( (char *) packet + sizeof(struct ether_header)+ sizeof (struct ip) + (tcp->th_off * sizeof(u_int32_t) + sizeof(u_int16_t)));
+				data = (char *) packet + sizeof(struct ether_header) + sizeof (struct ip) + (tcp->th_off * sizeof(u_int32_t)) + sizeof(struct my_dns) + sizeof(u_int16_t);
 			}
 		}
 	
@@ -477,8 +524,8 @@ void handle_IP(u_char *args, const struct pcap_pkthdr* pkthdr,const u_char* pack
 			return;
 		}
 
-		// ignore seemingly bogus queries with multiple flags set
-		if ((ntohs(dns->dns_qdcount)>0)+(ntohs(dns->dns_ancount)>0)+(ntohs(dns->dns_nscount)>0)+(ntohs(dns->dns_arcount)>0)>1 ) {
+		// ignore packets with no questions
+		if (ntohs(dns->dns_qdcount) == 0) {
 			return;
 		}
 		
@@ -488,6 +535,10 @@ void handle_IP(u_char *args, const struct pcap_pkthdr* pkthdr,const u_char* pack
 			if (!tlen) tlen=*data;
 			for (;(tlen&&((void *)data<((void *)packet+caplen-1)));tlen--){
 				data++;
+				// bail on an invalid dns char
+				if(!valid_dns_char(*data)) {
+					return;
+				}
 				if (dpos<NS_MAXDNAME) dname[dpos++] = *data;
 			}
 			if (dpos<NS_MAXDNAME) dname[dpos++] = '.';
@@ -503,9 +554,14 @@ void handle_IP(u_char *args, const struct pcap_pkthdr* pkthdr,const u_char* pack
 			return;
 		}
 
+		if( option_D ) {
+			printf("src: %-15s  proto: %s  qtype: 0x%02x  domain: %s\n", (inet_ntoa(ip_src)), 
+				(ip->ip_p == 17 ? "udp" : "tcp"), qtype, dname);
+		}
+
 		// add packet to bucket array
 		if (ntohs(dns->dns_qdcount)&&qtype) {
-			add_to_bucket( ip_src, ip->ip_p, 1, qtype );
+			add_to_bucket( &ip_src, ip->ip_p, 1, qtype );
 		}
 	}
 	return;
@@ -525,15 +581,16 @@ int main(int argc,char **argv){
 	char *dst_addr = NULL;
 	char *dst_mask = NULL;
 	struct sigaction sa;
-	struct in_addr addr;
+	struct in_addr addr,tmpaddr;
 	u_int f_size;
 	char *args = NULL;
+	char *name = NULL;
 	u_int c = 0;
 
+	if ( ( name = (char *)strdup(argv[0]) ) == NULL) malloc_fail("name", strlen(argv[0]) );
 	// loop through command line options and get options
 	while(1) {
-		int option_index = 0;
-		c = getopt(argc, argv,"i:t:a:w:x:m:bdvh");
+		c = getopt(argc, argv,"i:t:a:w:x:m:A:M:QbdDvh");
 		
 		if (c==-1) break;
 		switch(c) {
@@ -579,11 +636,39 @@ int main(int argc,char **argv){
 					}
 				}
 				break;
+			case 'M':
+				if (optarg && (dst_mask == NULL) ) {
+					if ( inet_aton(optarg, &tmpaddr) ) {
+						if ( ( dst_mask = (char *)strdup(optarg) ) == NULL) malloc_fail("filter mask", strlen(optarg) );
+						option_M=1;
+					} else {
+						fprintf(stderr,"Invalid filter mask \"%s\"\n",optarg);
+						option_h = 1;
+					}
+				}
+				break;
+			case 'A':
+				if (optarg && (dst_addr == NULL) ) {
+					if ( inet_aton(optarg, &tmpaddr) ) {
+						if ( ( dst_addr = (char *)strdup(optarg) ) == NULL) malloc_fail("dest filter", strlen(optarg) );
+						option_A=1;
+					} else {
+						fprintf(stderr,"Invalid filter address \"%s\"\n",optarg);
+						option_h = 1;
+					}
+				}
+				break;
+			case 'Q':
+				option_Q = 1;
+				break;
 			case 'b':
 				option_b = 1;
 				break;
 			case 'd':
 				option_d = 1;
+				break;
+			case 'D':
+				option_D = 1;
 				break;
 			case 'v':
 				option_v++;
@@ -599,25 +684,45 @@ int main(int argc,char **argv){
 	if (optind<argc) option_h = 1;
 	if (option_h) {
 		fprintf(stderr,"dns_flood_detector, version %s\n",VERSION);
-		fprintf(stderr,"Usage: %s [OPTION]\n\n",argv[0]);
+		fprintf(stderr,"Usage: %s [OPTION]\n\n",name);
 		fprintf(stderr,"-i IFNAME		specify device name to listen on\n");
 		fprintf(stderr,"-t N			alarm at >N queries per second\n");
 		fprintf(stderr,"-a N			reset alarm after N seconds\n");
 		fprintf(stderr,"-w N			calculate stats every N seconds\n");
 		fprintf(stderr,"-x N			create N buckets\n");
 		fprintf(stderr,"-m N			report overall stats every N seconds\n");
+		fprintf(stderr,"-A addr			filter for specific address\n");
+		fprintf(stderr,"-M mask			netmask for filter (in conjunction with -A)\n");
+		fprintf(stderr,"-Q			don't filter by local interface address\n");
 		fprintf(stderr,"-b			run in foreground in bindsnap mode\n");
 		fprintf(stderr,"-d			run in background in daemon mode\n");
+		fprintf(stderr,"-D			dump dns packets (implies -b)\n");
 		fprintf(stderr,"-v			verbose output - use again for more verbosity\n");
 		fprintf(stderr,"-h			display this usage information\n");
 		exit(1);
 	}
 
-	if ( ( ! option_d ) && ( ! option_b ) ) {
-		fprintf(stderr,"%s couldn't start\n",argv[0]);
-		fprintf(stderr,"You must specify either either -d (daemon) or -b (bindsnap)\n");
+	// if dumping packets, force option_b and disable option_d
+	if( option_D ) {
+		if( ! option_b )
+			option_b = 1;
+		
+		if( option_d )
+			option_d = 0;
+
+	}
+
+	if ( ( option_Q ) && ( option_A ) ) {
+		fprintf(stderr,"%s couldn't start\n",name);
+		fprintf(stderr,"You can't specify both -A (address filter) and -Q (no filter)\n");
 		exit(1);
 	}
+	if ( ( ! option_d ) && ( ! option_b ) ) {
+		fprintf(stderr,"%s couldn't start\n",name);
+		fprintf(stderr,"You must specify either -d (daemon) or -b (bindsnap)\n");
+		exit(1);
+	}
+	free(name);
 	// set up for daemonized operation unless running in bindsnap mode
 	if ( ! option_b ) {
 		openlog("dns_flood_detector",LOG_PID|LOG_CONS,LOG_DAEMON);
@@ -641,27 +746,48 @@ int main(int argc,char **argv){
 		exit(1);
 	}
 
-	// get network address and netmask for device
-	pcap_lookupnet(dev,&netp,&maskp,errbuf);
+	/* restrict to queries to primary local address? */
+	if (option_Q) {
+		f_size = strlen("port 53 ");
+		if ( ( filter = (char *) malloc ( f_size+1) ) == NULL ) malloc_fail( "filter", f_size+1 );
+		snprintf( filter, f_size, "port 53");
+	} else {
+		if (! option_A) {
+			// get network address and netmask for device
+			pcap_lookupnet(dev,&netp,&maskp,errbuf);
+		
+			// set up filter with local network
+			addr.s_addr = (unsigned long int)netp;
+			if ( ( dst_addr = (char *)malloc( strlen((char *)inet_ntoa(addr))+1) ) == NULL ) malloc_fail("dest_addr", strlen((char *)inet_ntoa(addr))+1 );
+			strncpy(dst_addr,(char*)inet_ntoa(addr),strlen((char *)inet_ntoa(addr)));
+			dst_addr[strlen((char *)inet_ntoa(addr))]='\0';
+		
+			addr.s_addr = (unsigned long int)maskp;
+			if (!option_M) {
+				if ( ( dst_mask = (char *)malloc( strlen((char *)inet_ntoa(addr))+1) ) == NULL ) malloc_fail("dest_mask", strlen((char *)inet_ntoa(addr))+1 );
+				strncpy(dst_mask,(char*)inet_ntoa(addr),strlen((char *)inet_ntoa(addr)));
+				dst_mask[strlen((char *)inet_ntoa(addr))]='\0';
+			}
+		} else {
+			// we're using an address from -A
+			if (!option_M) {
+				// if no mask was specified, then use just a host mask
+				if ( ( dst_mask = (char *)malloc(16) ) == NULL ) malloc_fail("dest_mask", 16);
+				strncpy(dst_mask,"255.255.255.255",15);
+			}
+		}
+	
+		f_size = strlen("port 53 and dst net mask   ")+ strlen(dst_mask)+ strlen(dst_addr);
+		if ( ( filter = (char *) malloc ( f_size+1) ) == NULL ) malloc_fail( "filter", f_size+1 );
+		snprintf( filter, f_size, "port 53 and dst net %s mask %s", dst_addr, dst_mask);
+	
+		free (dst_mask);
+		free (dst_addr);
+	}
 
-	// set up filter with local network
-	addr.s_addr = (unsigned long int)netp;
-	if ( ( dst_addr = (char *)malloc( strlen((char *)inet_ntoa(addr))+1) ) == NULL ) malloc_fail("dest_addr", strlen((char *)inet_ntoa(addr))+1 );
-	strncpy(dst_addr,(char*)inet_ntoa(addr),strlen((char *)inet_ntoa(addr)));
-	dst_addr[strlen((char *)inet_ntoa(addr))]='\0';
-
-	addr.s_addr = (unsigned long int)maskp;
-	if ( ( dst_mask = (char *)malloc( strlen((char *)inet_ntoa(addr))+1) ) == NULL ) malloc_fail("dest_mask", strlen((char *)inet_ntoa(addr))+1 );
-	strncpy(dst_mask,(char*)inet_ntoa(addr),strlen((char *)inet_ntoa(addr)));
-	dst_mask[strlen((char *)inet_ntoa(addr))]='\0';
-
-	f_size = strlen("port 53 and dst net mask   ")+ strlen(dst_mask)+ strlen(dst_addr);
-	if ( ( filter = (char *) malloc ( f_size+1) ) == NULL ) malloc_fail( "filter", f_size+1 );
-	snprintf( filter, f_size, "port 53 and dst net %s mask %s", dst_addr, dst_mask);
-
-	free (dst_mask);
-	free (dst_addr);
-
+	if ( option_b && option_v ) {
+		printf("using filter \"%s\" on dev %s\n", filter, dev);
+	}
 	// open device for reading only local traffic
 	descr = pcap_open_live(dev,1500,0,1,errbuf);
 	if(descr == NULL) { 
@@ -671,11 +797,13 @@ int main(int argc,char **argv){
 
 	// compile filter
 	if(pcap_compile(descr,&fp,filter,0,netp) == -1) { 
+		fprintf(stderr,"error compiling filter: %s\n",pcap_geterr(descr));
 		exit(1);
 	}
 
 	// set filter
         if(pcap_setfilter(descr,&fp) == -1){ 
+		fprintf(stderr,"error setting filter: %s\n",pcap_geterr(descr));
 		exit(1); 
 	}
 

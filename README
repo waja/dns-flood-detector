@@ -1,4 +1,4 @@
-DNS FLood Detector 1.10
+DNS FLood Detector 1.12
 Dennis Opacki
 dopacki@adotout.com
 
@@ -17,6 +17,9 @@ incoming  dns queries to a nameserver. The tool may be run in one of two
 modes, either  daemon mode or "bindsnap" mode. In daemon mode, the tool 
 will alarm via syslog. In bindsnap mode, the user is able to get 
 near-real-time stats on usage to aid in more detailed troubleshooting. 
+By default, it will count dns queries directed to any address in the same
+network as the primary IP address on the interface being watched; the -A,
+-M, and -Q options can be used to modify this behaviour.
 
 How do I build it?
 
@@ -52,22 +55,23 @@ Usage: ./dns_flood_detector [OPTION]
 -w N                   calculate stats every N seconds
 -x N                   create N buckets
 -m N                   mark total query rate every N seconds
+-A addr                filter for specific address
+-M mask                netmask for filter (in conjunction with -A)
+-Q                     don't filter by local interface address
 -b                     run in foreground in bindsnap mode
 -d                     run in background in daemon mode
+-D	               dump dns packets (implies -b)
 -v                     verbose output - use again for more verbosity
 -h                     display this usage information
 
 Sample Output:
 
 dopacki:~$ sudo ./dns_flood_detector -v -v -b -t10
-[15:14:56] source [192.168.1.45] - 0 qps tcp : 24 qps udp [8 qps A] [16 
-qps PTR] 
+[15:14:56] source [192.168.1.45] - 0 qps tcp : 24 qps udp [8 qps A] [16 qps PTR] 
 [15:14:56] source [10.0.24.2] - 0 qps tcp : 15 qps udp [15 qps A] 
-[15:15:06] source [192.168.1.45] - 0 qps tcp : 24 qps udp [8 qps A] [16 
-qps PTR] 
+[15:15:06] source [192.168.1.45] - 0 qps tcp : 24 qps udp [8 qps A] [16 qps PTR] 
 [15:15:06] source [10.0.24.2] - 0 qps tcp : 15 qps udp [14 qps A] 
-[15:15:16] source [192.168.1.45] - 0 qps tcp : 23 qps udp [7 qps A] [15 
-qps PTR] 
+[15:15:16] source [192.168.1.45] - 0 qps tcp : 23 qps udp [7 qps A] [15 qps PTR] 
 
 What if I have questions?  
 
