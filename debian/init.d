@@ -23,6 +23,8 @@ DESC=dns-flood-detector
 
 test -x $DAEMON || exit 0
 
+. /lib/lsb/init-functions
+
 # Include dns-flood-detector defaults if available
 if [ -f /etc/default/dns-flood-detector ] ; then
 	. /etc/default/dns-flood-detector
