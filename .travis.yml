@@ -1,14 +1,22 @@
 language: c
 
-install:
+before_install:
+    # update package list
     - sudo apt-get update -qq
+    # installneeded packages for uscan
     - sudo apt-get install -qq --no-install-recommends devscripts libwww-perl
+    # download original tarball
     - uscan --force-download
+    # remove packages needed for uscan
     - sudo apt-get purge -qq libwww-perl
     - sudo apt-get autoremove -qq
+
+install:
+    # install build dependencies
     - sudo apt-get install -qq --no-install-recommends debhelper libpcap0.8-dev hardening-wrapper
 
 script:
+    # build the debian package
     - debuild -uc -us
 
 #notifications:
