@@ -4,8 +4,8 @@ Priority: optional
 Maintainer: Jan Wagner <waja@cyconet.org>
 Build-Depends: debhelper (>= 9), libpcap0.8-dev, hardening-wrapper
 Homepage: http://www.adotout.com/
-Vcs-Browser: http://git.debian.org/?p=collab-maint/dns-flood-detector.git
-Vcs-Git: git://git.debian.org/git/collab-maint/dns-flood-detector.git
+Vcs-Browser: http://anonscm.debian.org/gitweb/?p=collab-maint/dns-flood-detector.git
+Vcs-Git: git://anonscm.debian.org/collab-maint/dns-flood-detector.git
 Standards-Version: 3.9.5
 
 Package: dns-flood-detector
