@@ -1,10 +1,22 @@
-dns-flood-detector (1.20-1) UNRELEASED; urgency=low
+dns-flood-detector (1.20-1) unstable; urgency=low
 
   * New upstream release
   * Enable Hardening
     - build-dep on hardening-wrapper
+  * [a454efe] Source init functions in init script
+  * [39f0420] Updating standards version to 3.9.4, no changes needed
+  * [a6c1551] Include dns_flood_collector.pl as example
+  * [b7b35b2] Update Vcs-headers
+  * [8260b99] Updating standards version to 3.9.5, no changes needed
+  * [7bffbb7] Add travis-ci config
+  * [1b8697f] Reorder and comment .travis.yml
+  * [a63e27c] Add lintian checks after build to .travis.yml
+  * [738c15d] Update VCS-* fields to current canonical URIs
+  * [ccc5dba] Update to recent copyright format
+  * [f383018] Adjust debian/rules to make hardening efficient
+  * [1438e9d] Provide lintian override for missing upstream changelog
 
- -- Jan Wagner <waja@cyconet.org>  Wed, 22 May 2013 13:40:57 +0200
+ -- Jan Wagner <waja@cyconet.org>  Sun, 02 Mar 2014 19:49:52 +0100
 
 dns-flood-detector (1.12-7) unstable; urgency=low
 
