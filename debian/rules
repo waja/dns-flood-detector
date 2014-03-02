@@ -6,7 +6,10 @@
 
 # hardening
 export DEB_BUILD_HARDENING=1
+CPPFLAGS:=$(shell dpkg-buildflags --get CPPFLAGS)
 CFLAGS:=$(shell dpkg-buildflags --get CFLAGS)
+CXXFLAGS:=$(shell dpkg-buildflags --get CXXFLAGS)
+LDFLAGS:=$(shell dpkg-buildflags --get LDFLAGS)
 
 CFLAGS += -D_BSD_SOURCE -Wall -g
 LDLIBS += -lpcap -lpthread -lm
@@ -23,7 +26,7 @@ build-indep: build-stamp
 build-stamp:
 	dh_testdir
 	# Add here commands to compile the package.
-	$(CC) $(CFLAGS) dns_flood_detector.c $(LDLIBS) -o dns_flood_detector
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) dns_flood_detector.c $(LDLIBS) -o dns_flood_detector
 
 	touch $@
 
