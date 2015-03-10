@@ -12,8 +12,13 @@ before_install:
     - sudo apt-get autoremove -qq
 
 install:
-    # install build dependencies
-    - sudo apt-get install -qq --no-install-recommends debhelper libpcap0.8-dev hardening-wrapper
+    # install packages needed for mk-build-deps
+    - sudo apt-get install -qq --no-install-recommends devscripts equivs
+    # pull build deps from debian/control
+    - sudo mk-build-deps -ir
+    # remove packages needed for mk-build-deps
+    - sudo apt-get purge -qq equivs
+    - sudo apt-get autoremove -qq
 
 script:
     # build the debian package
