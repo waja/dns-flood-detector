@@ -1,0 +1,18 @@
+Author: itxx00 <itxx00@gmail.com>
+Origin: https://github.com/itxx00/dns-flood-detector/commit/e36e230ecebb6290bc003439479803deff2c3104.patch
+Subject: Extending log types
+
+--- a/dns_flood_detector.c
++++ b/dns_flood_detector.c
+@@ -301,9 +301,9 @@
+   float qpsf;
+   char st_time[10];
+   time_t now = time(0);
+-  u_int types[] = {1,2,5,6,12,15,28,38,252,255,0};
++  u_int types[] = {1,2,5,6,12,15,16,28,38,39,252,255,0};
+   char *target;
+-  char *names[] = {"A","NS","CNAME","SOA","PTR","MX","AAAA","A6","AXFR","ANY",""};
++  char *names[] = {"A","NS","CNAME","SOA","PTR","MX","TXT","AAAA","A6","DNAME","AXFR","ANY",""};
+   struct tm *raw_time = localtime(&now);
+   snprintf(st_time, 9, "%02d:%02d:%02d",raw_time->tm_hour,raw_time->tm_min,raw_time->tm_sec);
+ 
