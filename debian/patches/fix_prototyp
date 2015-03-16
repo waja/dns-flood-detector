@@ -1,9 +1,9 @@
 From: dann frazier <dannf@debian.org>
 Subject: fix missing function prototype definition
 
---- dns-flood-detector-1.10/dns_flood_detector.c~       2003-12-29 20:53:38.000000000 -0700
-+++ dns-flood-detector-1.10/dns_flood_detector.c        2006-11-18 17:38:47.000000000 -0700
-@@ -79,6 +79,7 @@
+--- a/dns_flood_detector.c
++++ b/dns_flood_detector.c
+@@ -107,6 +107,7 @@
  #include <stdlib.h>
  #include <fcntl.h>
  #include <errno.h>
