@@ -6,7 +6,7 @@ before_install:
     # installneeded packages for uscan
     - sudo apt-get install -qq --no-install-recommends devscripts libwww-perl
     # download original tarball
-    - uscan --force-download
+    - UVERSION=$(dpkg-parsechangelog | grep ^Version | cut -d' ' -f2 | cut -d'-' -f1); uscan --verbose --download-version ${UVERSION} --force-download
     # remove packages needed for uscan
     - sudo apt-get purge -qq libwww-perl
     - sudo apt-get autoremove -qq
