@@ -1,3 +1,9 @@
+dns-flood-detector (1.20-4~1.gbp6da676) UNRELEASED; urgency=medium
+
+  * UNRELEASED
+
+ -- Jan Wagner <waja@cyconet.org>  Sat, 10 Sep 2016 14:12:25 +0200
+
 dns-flood-detector (1.20-3) unstable; urgency=medium
 
   * [e388f86] travis-ci: don't install build-deps manual
