@@ -1,8 +1,17 @@
-dns-flood-detector (1.20-3) UNRELEASED; urgency=medium
+dns-flood-detector (1.20-3) unstable; urgency=medium
 
-  * 
+  * [e388f86] travis-ci: don't install build-deps manual
+  * [5035fb3] travis-ci: build package with dpkg-buildpackage
+  * [1b42314] Refresh patches/fix_prototyp
+  * [e7cde7c] debian/control: reformating with warp-and-sort
+  * [fec98e0] travis-ci: grab actual used upstream version
+  * [118ec9c] travis-ci: Adding requried arguments for trusty
+  * [aeab465] travis-ci: automatically install dependencies
+  * [9144fb8] d/control: Remove hardening-wrapper from Build-Depends
+    (Closes: #836622)
+  * [5b0f4ee] d/control: Bump Standards-Version to 3.9.8, no changes needed
 
- -- Jan Wagner <waja@cyconet.org>  Sun, 12 Oct 2014 21:43:22 +0200
+ -- Jan Wagner <waja@cyconet.org>  Sat, 10 Sep 2016 14:08:46 +0200
 
 dns-flood-detector (1.20-2) unstable; urgency=medium
 
