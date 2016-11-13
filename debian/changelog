@@ -11,7 +11,7 @@ dns-flood-detector (1.20-3) unstable; urgency=medium
   * [1b42314] Refresh patches/fix_prototyp
   * [e7cde7c] debian/control: reformating with warp-and-sort
   * [fec98e0] travis-ci: grab actual used upstream version
-  * [118ec9c] travis-ci: Adding requried arguments for trusty
+  * [118ec9c] travis-ci: Adding required arguments for trusty
   * [aeab465] travis-ci: automatically install dependencies
   * [9144fb8] d/control: Remove hardening-wrapper from Build-Depends
     (Closes: #836622)
