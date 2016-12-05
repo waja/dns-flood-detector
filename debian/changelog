@@ -1,3 +1,9 @@
+dns-flood-detector (1.20-5) UNRELEASED; urgency=medium
+
+  * UNRELEASED
+
+ -- Jan Wagner <waja@cyconet.org>  Mon, 05 Dec 2016 14:28:22 +0100
+
 dns-flood-detector (1.20-4) unstable; urgency=medium
 
   * [0ff1167] d/control: Depend on lsb-base
