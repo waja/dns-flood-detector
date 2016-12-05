@@ -1,8 +1,10 @@
-dns-flood-detector (1.20-4~1.gbp6da676) UNRELEASED; urgency=medium
+dns-flood-detector (1.20-4) unstable; urgency=medium
 
-  * UNRELEASED
+  * [0ff1167] d/control: Depend on lsb-base
+  * [51a32a6] d/changelog: Fixing typo
+  * [2d36138] travis-ci: Make use of travis.d.n
 
- -- Jan Wagner <waja@cyconet.org>  Sat, 10 Sep 2016 14:12:25 +0200
+ -- Jan Wagner <waja@cyconet.org>  Mon, 05 Dec 2016 14:13:55 +0100
 
 dns-flood-detector (1.20-3) unstable; urgency=medium
 
