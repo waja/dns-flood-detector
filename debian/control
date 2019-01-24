@@ -6,7 +6,7 @@ Build-Depends: debhelper (>= 9), libpcap0.8-dev
 Homepage: http://www.adotout.com/
 Vcs-Browser: https://gitlab.uncompleted.org/debian/dns-flood-detector
 Vcs-Git: https://gitlab.uncompleted.org/debian/dns-flood-detector.git
-Standards-Version: 3.9.8
+Standards-Version: 4.3.0
 
 Package: dns-flood-detector
 Architecture: any
