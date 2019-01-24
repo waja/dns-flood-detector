@@ -14,12 +14,6 @@ LDFLAGS:=$(shell dpkg-buildflags --get LDFLAGS)
 CFLAGS += -D_BSD_SOURCE -Wall -g
 LDLIBS += -lpcap -lpthread -lm
 
-ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
-	CFLAGS += -O0
-else
-	CFLAGS += -O2
-endif
-
 build: build-arch build-indep
 build-arch: build-stamp
 build-indep: build-stamp
