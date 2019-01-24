@@ -1,3 +1,9 @@
+dns-flood-detector (1.20-6) UNRELEASED; urgency=medium
+
+  * 
+
+ -- Jan Wagner <waja@cyconet.org>  Thu, 24 Jan 2019 10:51:31 +0100
+
 dns-flood-detector (1.20-5) unstable; urgency=medium
 
   * [d1ee939] travis-ci: Use xenial image
