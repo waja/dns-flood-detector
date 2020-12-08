@@ -4,6 +4,8 @@
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
 
+include /usr/share/dpkg/buildtools.mk
+
 # hardening
 export DEB_BUILD_HARDENING=1
 CPPFLAGS:=$(shell dpkg-buildflags --get CPPFLAGS)
