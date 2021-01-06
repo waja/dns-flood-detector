@@ -1,3 +1,9 @@
+dns-flood-detector (1.20-7) UNRELEASED; urgency=medium
+
+  * NOT RELEASED YET
+
+ -- Jan Wagner <waja@cyconet.org>  Wed, 06 Jan 2021 21:44:19 +0100
+
 dns-flood-detector (1.20-6) unstable; urgency=medium
 
   [ Jan Wagner ]
