@@ -1,8 +1,18 @@
-dns-flood-detector (1.20-6) UNRELEASED; urgency=medium
+dns-flood-detector (1.20-6) unstable; urgency=medium
 
-  * 
+  [ Jan Wagner ]
+  * [9f76895] Adding d/.gitlab-ci.yml
+  * [2fdc34f] Bump Standards-Version to 4.5.1.0, no changes needed
 
- -- Jan Wagner <waja@cyconet.org>  Thu, 24 Jan 2019 10:51:31 +0100
+  [ Helmut Grohne ]
+  * [9db1d5f] Fix FTCBFS: Let dpkg's buildtools.mk supply $(CC).
+    (Closes: #949599)
+
+  [ Jan Wagner ]
+  * [88f1ad9] Adding Github CI
+  * [17a80e0] d/control: Raise compat level to 12
+
+ -- Jan Wagner <waja@cyconet.org>  Wed, 06 Jan 2021 21:33:15 +0100
 
 dns-flood-detector (1.20-5) unstable; urgency=medium
 
