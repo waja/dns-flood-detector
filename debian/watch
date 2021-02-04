@@ -1,2 +1,2 @@
-version=3
-http://www.adotout.com/dnsflood-(.*)\.tgz
+version=4
+http://www.adotout.com dnsflood-(.*)\.tgz
