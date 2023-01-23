@@ -1,0 +1,14 @@
+[Unit]
+Description=dns-flood-detector daemon
+
+[Service]
+Environment=PIDFILE=/var/run/dns-flood-detector.pid
+EnvironmentFile=-/etc/default/dns-flood-detector
+ExecStart=/usr/sbin/dns-flood-detector $DAEMON_OPTS
+ExecReload=/bin/kill -HUP $MAINPID
+KillMode=process
+Restart=on-failure
+Type=notify
+
+[Install]
+WantedBy=multi-user.target
