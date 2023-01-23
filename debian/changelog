@@ -1,8 +1,17 @@
-dns-flood-detector (1.20-7) UNRELEASED; urgency=medium
+dns-flood-detector (1.20-7) unstable; urgency=medium
 
-  * NOT RELEASED YET
+  [ Jan Wagner ]
+  * [34a5705] Use secure copyright file specification URI.
+  * [812b668] Remove overrides for lintian tags that are no longer supported.
+  * [1da11e5] Update watch file format version to 4.
+  * [bd99c1c] d/source/options: Adding .github to diff ignore
+  * [ab52f4a] Bump debhelper from old 12 to 13.
+  * [2d78c7e] Bump Standards-Version to 4.6.2
+  * [14e7160] Drop lsb-base, sysvinit-utils is essential
+  * [dcdc452] Set Rules-Requires-Root: no.
+  * [353f35e] Adding unitfile
 
- -- Jan Wagner <waja@cyconet.org>  Wed, 06 Jan 2021 21:44:19 +0100
+ -- Jan Wagner <waja@cyconet.org>  Mon, 23 Jan 2023 11:34:04 +0000
 
 dns-flood-detector (1.20-6) unstable; urgency=medium
 
