@@ -4,8 +4,8 @@ Priority: optional
 Maintainer: Jan Wagner <waja@cyconet.org>
 Build-Depends: debhelper-compat (= 13), libpcap0.8-dev
 Homepage: http://www.adotout.com/
-Vcs-Browser: https://gitlab.uncompleted.org/debian/dns-flood-detector
-Vcs-Git: https://gitlab.uncompleted.org/debian/dns-flood-detector.git
+Vcs-Browser: https://salsa.debian.org/debian/dns-flood-detector
+Vcs-Git: https://salsa.debian.org/debian/dns-flood-detector.git
 Standards-Version: 4.6.2
 Rules-Requires-Root: no
 
