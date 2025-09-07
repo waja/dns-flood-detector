@@ -1,0 +1,24 @@
+--- a/dns_flood_detector.c
++++ b/dns_flood_detector.c
+@@ -166,7 +166,10 @@
+ #define BCAST 0xffFFffFF
+ 
+ // this is our statistics thread
+-void *run_stats () {
++void *run_stats (void *arg) {
++  // suppress unused parameter warning
++  (void)arg;
++
+   // prepare multicast socket
+   struct sockaddr_in addr;
+   int sock;
+@@ -197,6 +200,9 @@
+     pthread_mutex_unlock(&stats_lock);
+     sleep (option_w);
+   }
++
++  // Not reached, but required to match function signature
++  return NULL;
+ }
+ 
+ // report saddr stats
