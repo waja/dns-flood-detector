@@ -1,8 +1,10 @@
-dns-flood-detector (1.20-8) UNRELEASED; urgency=medium
+dns-flood-detector (1.20-8) unstable; urgency=medium
 
-  * 
+  [ Jan Wagner ]
+  * [625934a] d/control: Update VCS-headers to salsa.debian.org
+  * [2c70552] Adding d/patches/fix_gcc15 to build with GCC15 (Closes: #1096532)
 
- -- Jan Wagner <waja@cyconet.org>  Mon, 23 Jan 2023 12:11:35 +0000
+ -- Jan Wagner <waja@cyconet.org>  Sun, 07 Sep 2025 06:36:20 +0000
 
 dns-flood-detector (1.20-7) unstable; urgency=medium
 
