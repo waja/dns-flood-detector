@@ -12,6 +12,7 @@ Rules-Requires-Root: no
 Package: dns-flood-detector
 Architecture: any
 Depends: ${misc:Depends}, ${shlibs:Depends}
+Pre-Depends: ${misc:Pre-Depends}
 Description: detect abusive usage levels on high traffic nameservers
  This package provides the dns-flood-detector daemon.
  .
